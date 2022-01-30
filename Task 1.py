@@ -26,15 +26,34 @@ def annot_min(x,y, ax=None):
               arrowprops=arrowprops, bbox=bbox_props, ha="right", va="top")
     ax.annotate(text, xy=(xmin, ymin), xytext=(0.94,0.96), **kw)
 
+def force(distance):
+    atoms = Atoms('2Cu', positions=[(0., 0., 0.), (0., 0., distance)])
+    atoms.set_calculator(calc)
+    f = atoms.get_forces()
+    return f[1,2]
+
 x = np.linspace(2.2*Ang,5*Ang,1000)
 y = np.zeros(len(x))
+z = np.zeros(len(x))
 
 for i in range(len(x)-1):
     p = x[i]
     y[i]=potential_energy(x[i])
 
+for i in range(len(x)-1):
+    p = x[i]
+    z[i]=force(x[i])
+
+plt.figure(0)
 plt.plot(x,y)
 plt.plot(x,np.zeros(len(x)),'--')
 plt.xlabel("Distance (Arn)")
 plt.ylabel("Potential Energy (eV)")
 annot_min(x,y)
+
+plt.figure(1)
+plt.plot(x,z,'r')
+plt.plot(x,np.zeros(len(x)),'--g')
+plt.xlabel("Distance (Arn)")
+plt.ylabel("Force (N)")
+annot_min(x,z)
